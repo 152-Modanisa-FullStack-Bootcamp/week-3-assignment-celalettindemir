@@ -29,11 +29,13 @@ describe("App.vue",()=>{
         expect(h1.text()).toContain("Daily Corona Cases in Turkey");
     });
     it("notificationArea class check based on getCount value",()=>{
-        expect(true).toBeTruthy()
+        const notificationArea = wrapper.find(".notificationArea");
+        const count=wrapper.vm.getCount();
+        expect(notificationArea.text()).toBe(`So safe. Case count is ${count}k`)
     });
     it("notificationArea text message check",()=>{
-        const div = wrapper.find(".notificationArea");
-        expect(div.text()).toContain("So safe. Case count is 0k")
+        const notificationArea = wrapper.find(".notificationArea");
+        expect(notificationArea.text()).toContain("So safe. Case count is 0k")
     });
 })
 
