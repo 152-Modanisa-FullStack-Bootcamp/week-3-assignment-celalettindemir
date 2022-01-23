@@ -1,7 +1,7 @@
 import {createLocalVue, shallowMount} from "@vue/test-utils";
 import App from "../App";
 import Vuex from "vuex";
-import {actions, getters, state} from "../store";
+import {actions, getters, mutations, state} from "../store";
 
 describe("App.vue",()=>{
     const localVue=createLocalVue();
@@ -23,12 +23,14 @@ describe("App.vue",()=>{
     });
     it("h1 text equals to Daily Corona Cases in Turkey check",()=>{
         const h1 = wrapper.find("h1");
-        expect(h1.text()).toBe("Daily Corona Cases in Turkey");
+        expect(h1.text()).toEqual("Daily Corona Cases in Turkey");
     });
     it("notificationArea class check based on getCount value",async ()=>{
-        const notificationArea = wrapper.find(".notificationArea");
-        const count=getters.getCount(state);
-        expect(notificationArea.text()).toContain(`Case count is ${count}k`)
+        expect(wrapper.find(".notificationArea").classes()).toContain('safe');
+        await mutations.addToCount(state,8)
+        expect(wrapper.find(".notificationArea").classes()).toContain('normal');
+        await mutations.addToCount(state,8);
+        expect(wrapper.find(".notificationArea").classes()).toContain('danger');
     });
     it("notificationArea text message check",()=>{
         const notificationArea = wrapper.find(".notificationArea");

@@ -1,7 +1,7 @@
 import {createLocalVue, shallowMount} from "@vue/test-utils";
 import Counter from "../Counter";
 import Vuex from "vuex";
-import {actions, state} from "../store";
+import {actions,mutations, state} from "../store";
 
 describe('Counter.vue', () => {
     const localVue=createLocalVue();
@@ -12,7 +12,8 @@ describe('Counter.vue', () => {
             localVue,
             store:new Vuex.Store({
                 state,
-                actions
+                actions,
+                mutations
             })
         });
     });
@@ -32,33 +33,32 @@ describe('Counter.vue', () => {
         const firstButton = getButton(0);
         expect(firstButton.text()).toBe("Decrease");
     })
-    it('Increase button functionality check', () => {
+    it('Increase button functionality check', async () => {
         const secondButton = getButton(1);
-        const increase=jest.fn();
-        wrapper.setMethods({increase:increase});
-        secondButton.trigger("click");
-        expect(increase).toBeCalled()
+        let value=wrapper.vm.count;
+        await secondButton.trigger("click");
+        value++;
+        expect(wrapper.find("span").text()).toEqual(`${value}k`);
     })
-    it('Decrease button functionality check', () => {
+    it('Decrease button functionality check', async () => {
 
         const firstButton = getButton(0);
-        const decrease=jest.fn();
-        wrapper.setMethods({decrease:decrease});
-        firstButton.trigger("click");
-        expect(decrease).toBeCalled();
+        let value=wrapper.vm.count;
+        await firstButton.trigger("click");
+        value--;
+        expect(wrapper.find("span").text()).toEqual(`${value}k`);
     })
-    it('2 increase + decrease functionality check together', () => {
+    it('2 increase + decrease functionality check together', async() => {
         const firstButton = getButton(0);
         const secondButton = getButton(1);
-        const increase=jest.fn();
-        const decrease=jest.fn();
-        wrapper.setMethods({decrease:decrease});
-        wrapper.setMethods({increase:increase});
-        secondButton.trigger("click");
-        secondButton.trigger("click");
-        firstButton.trigger("click");
-        expect(increase).toBeCalledTimes(2);
-        expect(decrease).toBeCalledTimes(1);
+        let value=wrapper.vm.count;
+        await secondButton.trigger("click");
+        await secondButton.trigger("click");
+        value+=2;
+        expect(wrapper.find("span").text()).toEqual(`${value}k`);
+        await firstButton.trigger("click");
+        value--;
+        expect(wrapper.find("span").text()).toEqual(`${value}k`);
     })
     it('Count text show check', () => {
         const span = wrapper.find("span");
